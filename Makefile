@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Ofast
+CFLAGS = -Ofast -mwindows
 TARGET = window
 SRCS = main.c
 OBJS = $(SRCS:.c=.o)
