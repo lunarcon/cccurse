@@ -19,6 +19,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     HWND hlabel2 = Label("Opacity", 120, 50, 50, 20, hwnd, hInstance, 7);
     HWND hOpButtonDec = Button("-", 180, 50, 20, 20, hwnd, hInstance, 8);
     HWND hOpButtonInc = Button("+", 200, 50, 20, 20, hwnd, hInstance, 9);
+    HWND hOpLabel = Label("0.56", 230, 50, 50, 20, hwnd, hInstance, 10);
 
     HWND hlabel1 = Label("Enter Text", 10, 90, 100, 20, hwnd, hInstance, 5);
 
@@ -109,12 +110,20 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
                     if (opacity > 0) {
                         changeOpacity(hwnd, opacity - 10);
                     }
+                    char* opformat = (char*)malloc(5);
+                    sprintf(opformat, "%.2f", (float)opacity / 255);
+                    SetWindowText(GetDlgItem(hwnd, 10), opformat);
+                    free(opformat);
                 }
                 else if (id == 9) {
                     int opacity = getOpacity();
                     if (opacity < 255) {
                         changeOpacity(hwnd, opacity + 10);
                     }
+                    char* opformat = (char*)malloc(5);
+                    sprintf(opformat, "%.2f", (float)opacity / 255);
+                    SetWindowText(GetDlgItem(hwnd, 10), opformat);
+                    free(opformat);
                 }
             }
             return 0;
