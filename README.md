@@ -1,3 +1,3 @@
 # something something
 
-![preview of the goat](goat.png)
+![preview](preview.png)
