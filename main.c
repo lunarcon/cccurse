@@ -1,6 +1,8 @@
 #include "windefs.h"
 #include <stdio.h>
 
+DWORD acrylicColor = 0x90101010;
+
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
     WNDCLASSEX wc = { sizeof(WNDCLASSEX), CS_VREDRAW | CS_HREDRAW, WindowProc, 0L, 0L, hInstance, NULL, NULL, NULL, NULL, "C Form", NULL };
@@ -14,7 +16,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
     HWND hButton2 = Button("Clear TextBox", 10, 50, 100, 30, hwnd, hInstance, 2);
 
-    HWND hlabel = Label("Enter Text", 10, 90, 100, 20, hwnd, hInstance, 5);
+    HWND hlabel2 = Label("Opacity", 120, 50, 50, 20, hwnd, hInstance, 7);
+    HWND hOpButtonDec = Button("-", 180, 50, 20, 20, hwnd, hInstance, 8);
+    HWND hOpButtonInc = Button("+", 200, 50, 20, 20, hwnd, hInstance, 9);
+
+    HWND hlabel1 = Label("Enter Text", 10, 90, 100, 20, hwnd, hInstance, 5);
 
     HWND hTextBox = TextBox(getUserName(), 100, 90, 200, 20, hwnd, hInstance, 3);
 
@@ -35,7 +41,16 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 }
 
 void changeColor(HWND hwnd) {
-    SetBGEffect(hwnd, (DWORD)(0x90000000 + (rand() % 0x00FFFFFF)), TRUE, 0);
+    SetBGEffect(hwnd, acrylicColor=(DWORD)(0x90000000 + (rand() % 0x00FFFFFF)), TRUE, 0);
+}
+
+void changeOpacity(HWND hwnd, int opacity) {
+    opacity = opacity < 0 ? 0 : opacity > 255 ? 255 : opacity;
+    SetBGEffect(hwnd, acrylicColor=(acrylicColor & 0x00FFFFFF) + (opacity << 24), TRUE, 0);
+}
+
+int getOpacity() {
+    return (acrylicColor & 0xFF000000) >> 24;
 }
 
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -52,7 +67,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             SendMessage(hwnd, WM_SETICON, ICON_BIG, (LPARAM)appData->hIcon);
             SendMessage(hwnd, WM_SETICON, ICON_SMALL, (LPARAM)appData->hIcon);
             SetClassLongPtr(hwnd, GCLP_HBRBACKGROUND, (LONG_PTR)appData->hBrush);
-            SetBGEffect(hwnd, (DWORD)0x90101010, TRUE, 0);
+            SetBGEffect(hwnd, acrylicColor, TRUE, 0);
 
         }
         return 0;
@@ -88,6 +103,18 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
                 }
                 else if (id == 6) {
                     changeColor(hwnd);
+                }
+                else if (id == 8) {
+                    int opacity = getOpacity();
+                    if (opacity > 0) {
+                        changeOpacity(hwnd, opacity - 10);
+                    }
+                }
+                else if (id == 9) {
+                    int opacity = getOpacity();
+                    if (opacity < 255) {
+                        changeOpacity(hwnd, opacity + 10);
+                    }
                 }
             }
             return 0;
